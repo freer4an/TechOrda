@@ -3,7 +3,7 @@
 | Урок | Тип               | Название  | Ссылка                     |
 | ---- | ----------------- | --------- | -------------------------- |
 | 1.   |  git-init  | [github.com](./git-init/)  | https://github.com/freer4an/jusan-git/tree/e13eefdb96486ce943ba94b58dad8ea22f8f7201
-| 2.   |  readme    | [github.com](./readme/)    |
+| 2.   |  readme    | [github.com](./readme/)    | https://github.com/freer4an/jusan-git/tree/0816b480f8f70efeaf0bdce90553831dc463d820
 | 3.   |  gitignore | [github.com](./gitignore/) |
 | 4.   |  branch    | [github.com](./branch/)    |
 | 5.   |  merge     | [github.com](./merge/)     |
