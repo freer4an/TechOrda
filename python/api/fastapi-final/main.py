@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Path, Query
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -14,15 +14,15 @@ class CustomValidationError(Exception):
 
 # sum1n handler body ------------------------------------------------------
 @app.get("/sum1n/{n}")
-def summorial(n: int):
-    return {"result": sum([i for i in range(1, 11)])}
+def summorial(n: int = Path(ge=0)):
+    return {"result": sum([i for i in range(1, n+1)])}
 # -------------------------------------------------------------------------
 
 
 # fibonacci handler body --------------------------------------------------
 @app.get("/fibo")
-def fibonnaci(n: int):
-    if n <= 0:
+def fibonnaci(n: int = Query(ge=1)):
+    if n <= 1:
         return {"result": 0}
     
     prev, current = 0, 1
@@ -38,7 +38,7 @@ def fibonnaci(n: int):
 async def reverser(req: Request):
     text = req.headers.get("string")
     if text == None:
-        return {"result": ""}
+        return JSONResponse(status_code=400, content="missing 'string' header")
     return {"result": text[::-1]}
 # -------------------------------------------------------------------------
 
@@ -47,12 +47,12 @@ async def reverser(req: Request):
 global_list = []
 
 class RequestList(BaseModel):
-    element: str
+    element: str = Field(min_length=1)
 
 @app.put("/list")
 async def list_handler(req: RequestList):
     global_list.append(req.element)
-    return
+    return JSONResponse(status_code=200, content=f"{req.element} stored in elements list")
 
 @app.get("/list")
 def list_handler():
