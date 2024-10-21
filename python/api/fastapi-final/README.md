@@ -6,13 +6,27 @@
 ```console
 sudo apt install uvicorn
 ```
+2. Install virtualenv
+```console
+apt install python3.10-venv
+```
 
-2. Install the dependencies
+3. Create virtualenv to isolate this project
+```console
+python3 -m venv .venv
+```
+
+4. Activate virtual env
+```console
+source .venv/bin/activate
+```
+
+5. Install the dependencies
 ```console
 pip install requirement.txt
 ```
 
-3. Start the application
+6. Start the application
 ```console
 uvicorn main:app
 ```
