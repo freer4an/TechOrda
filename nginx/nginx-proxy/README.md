@@ -35,3 +35,13 @@ web-server: 0
 ---
 
 ### Ответ
+
+location / {
+        root /var/www/nginx/html;
+        index index.html;
+    }
+
+    location /api {
+        rewrite ^/api(/.*)$ $1 break;
+        proxy_pass http://localhost:9090;
+    }

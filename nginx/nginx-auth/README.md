@@ -10,3 +10,32 @@
 6. Учетка `design` не должна иметь доступ на другие пути, тоже самое касается других учеток.
 
 ---
+
+### Ответ
+
+user_design
+```bash
+design:$1$PRC.uzVY$5K8y7P7cSO95blouUttnd/
+```
+
+user_marketing
+```bash
+marketing:$1$WNEfjRnT$pJhekzGj62pCY2mUsOVnA1
+```
+
+```bash
+location /images {
+        alias /var/www/nginx/cats/;
+
+        auth_basic "Private website";
+        auth_basic_user_file conf.d/user_design;
+    }
+
+    location /gifs {
+        alias /var/www/nginx/gifs;
+
+        autoindex on;
+        auth_basic "Private route";
+        auth_basic_user_file conf.d/user_marketing;
+    }
+```

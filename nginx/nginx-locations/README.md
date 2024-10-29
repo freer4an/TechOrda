@@ -25,3 +25,30 @@ curl -H "Host: example.com" http://localhost:8080/
 ---
 
 ### Ответ
+
+```console
+server {
+    
+    listen       8080;
+    server_name  example.com;
+
+    location / {
+        root /var/www/nginx/html;
+        index index.html;
+    }
+
+    location /images/ {
+        alias /var/www/nginx/cats/;
+    }
+
+    location /gifs/ {
+        alias /var/www/nginx/gifs/;
+    }
+
+    location = /secret_word {
+        add_header Content-Type text/plain;
+        return 201 "jusan-nginx-locations";
+    }
+
+}
+```

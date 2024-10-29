@@ -20,3 +20,34 @@
 ---
 
 ### Ответ
+
+1. Последовательно запускаем команды:
+```bash
+sudo apt update
+sudo apt install ufw -y
+sudo ufw enable
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+2. Проверка изменений:
+```bash
+sudo ufw status verbose
+```
+
+```sh
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+80/tcp                     ALLOW IN    Anywhere
+443/tcp                    ALLOW IN    Anywhere
+80/tcp (v6)                ALLOW IN    Anywhere (v6)
+443/tcp (v6)               ALLOW IN    Anywhere (v6)
+```
+

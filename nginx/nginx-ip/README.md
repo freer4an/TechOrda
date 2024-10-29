@@ -22,3 +22,28 @@
 ---
 
 ### Ответ
+
+server {
+    listen       8080;
+    server_name  example.com;
+
+    location / {
+        root /var/www/nginx/html;
+        index index.html;
+    }
+
+    location = /secret_word {
+        add_header Content-Type text/plain;
+        return 203 "jusan-nginx-ip";
+
+
+        allow 192.0.0.1/20;
+        deny 192.0.0.1;
+        deny all;
+    }
+}
+
+```bash
+curl -I http://example.com:8080/secret_word
+```
+ERR_CONNECTION_TIMED_OUT
