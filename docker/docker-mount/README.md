@@ -47,3 +47,28 @@ bash ./tester.sh
 ---
 
 ### Ответ
+
+1. Скачивание файлов
+```bash
+curl -LJO https://stepik.org/media/attachments/lesson/686238/jusan-docker-mount.conf
+curl -LJO https://stepik.org/media/attachments/lesson/686238/jusan-docker-mount.zip
+```
+
+2. Распаковка
+```bash
+unzip jusan-docker-mount.zip -d .
+```
+
+3. Запускаем контейнер и монитируем конфиги
+```bash
+docker run -d --name jusan-docker-mount -p 9999:80 \
+    --mount type=bind,source="$(pwd)"/jusan-docker-mount.conf,target=/etc/nginx/conf.d/jusan-docker-mount.conf \
+    --mount type=bind,source="$(pwd)"/jusan-docker-mount,target=/var/www/example \
+    nginx:mainline
+```
+
+4. Удаляем конфиг по умолчанию, который находится внутри контейнера и перезапускаем nginx
+```bash
+docker exec jusan-docker-mount rm /etc/nginx/conf.d/default.conf
+docker exec jusan-docker-mount nginx -s reload
+```

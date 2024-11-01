@@ -41,4 +41,25 @@ bash ./tester.sh
 
 ### Ответ
 
+1. Создаем Dockerfile c содержимым:
+```bash
+cat << EOF > Dockerfile
+FROM python:latest
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY main.py .
+EXPOSE 8080
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+EOF
+```
 
+2. Собираем образ
+```bash
+docker build -t jusan-fastapi-final:dockerized .
+```
+
+3. Запускаем контейнер 
+```bash
+docker run --name jusan-dockerize -d -p 8081:8080 jusan-fastapi-final:dockerized
+```

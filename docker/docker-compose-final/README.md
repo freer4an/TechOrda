@@ -57,3 +57,46 @@ docker-compose logs api
 ---
 
 ### Ответ
+
+1. docker-compose.yml
+```yml
+version: '3'
+
+services:
+  api:
+    image: jusan-fastapi-final:dockerized
+    container_name: jusan-compose
+    ports:
+      - "8282:8080"
+
+  nginx:
+    image: nginx:mainline
+    container_name: jusan-nginx-final
+    ports:
+      - "8787:80"
+    volumes:
+      - ./jusan-docker-mount.conf:/etc/nginx/conf.d/jusan-docker-mount.conf
+      - ./jusan-docker-mount:/var/www/example
+      - ./jusan-fastapi-final.conf:/etc/nginx/conf.d/jusan-fastapi-final.conf
+    depends_on:
+      - api
+    restart: always
+```
+
+2. jusan-fastapi-final.conf
+
+```bash
+server {
+    listen 80;
+    server_name jusan.docker-compose;
+
+    location / {
+        proxy_pass http://jusan-compose-final:8080;
+    }
+}
+```
+
+3. 
+```bash
+docker compose up -d
+```

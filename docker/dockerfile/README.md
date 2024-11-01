@@ -57,3 +57,30 @@ bash ./tester.sh
 ---
 
 ### Ответ
+
+1. Скачиваем конфиги
+```bash
+curl -LJO https://stepik.org/media/attachments/lesson/686238/jusan-dockerfile.conf
+curl -LJO https://stepik.org/media/attachments/lesson/686238/jusan-dockerfile.zip
+unzip jusan-dockerfile.zip -d .
+```
+
+2. Создаем докерфайл с содержимым:
+```bash
+cat << EOF > Dockerfile 
+FROM nginx:mainline
+COPY jusan-dockerfile.conf /etc/nginx/conf.d/jusan-dockerfile.conf
+COPY jusan-dockerfile /var/www/jusan-dockerfile
+RUN rm /etc/nginx/conf.d/default.conf
+EOF
+```
+
+3. Собираем образ с названием и тегов nginx:jusan-dockerfile
+```bash
+docker build -t nginx:jusan-dockerfile .
+```
+
+4. Запускаем собранный образ
+```bash
+docker run --name jusan-dockerfile -d -p 6060:80 nginx:jusan-dockerfile
+```

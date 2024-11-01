@@ -42,3 +42,18 @@ bash ./tester.sh
 ---
 
 ### Ответ
+
+1. Для скачивания используя curl:
+```console
+curl -LJO https://raw.githubusercontent.com/Smagicom/TechOrda/refs/heads/main/docker/docker-bind/nginx.conf
+```
+
+2. Монитирование с --mount
+```console
+docker run -d --name jusan-docker-bind -p 7777:80 --mount type=bind,source="$(pwd)"/nginx.conf,target=/etc/nginx/nginx.conf nginx:mainline
+```
+
+3. Монтирование с -volume
+```bash
+docker run -d --name jusan-docker-bind -p 7777:80 -v "$(pwd)"/nginx.conf:/etc/nginx/nginx.conf nginx:mainline
+```

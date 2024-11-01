@@ -37,3 +37,20 @@ bash ./tester.sh
 ---
 
 ### Ответ
+
+1. Создаем docker-compose.yml с содержимым:
+```yml
+version: '3'
+
+services:
+  api:
+    image: jusan-fastapi-final:dockerized
+    container_name: jusan-compose
+    ports:
+      - "8282:8080"
+```
+
+2. Запускаем
+```bash
+docker compose up -d
+```

@@ -1,0 +1,2 @@
+curl -LJO https://raw.githubusercontent.com/Smagicom/TechOrda/refs/heads/main/docker/docker-bind/nginx.conf
+docker run -d --name jusan-docker-bind -p 7777:80 --mount type=bind,source="$(pwd)"/nginx.conf,target=/etc/nginx/nginx.conf nginx:mainline
