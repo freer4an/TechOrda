@@ -1,8 +1,37 @@
 from fastapi import FastAPI, Request, Path, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+from prometheus_client import Counter, Histogram, Gauge, make_asgi_app
+import prometheus_client
+import random
+import time
+
 
 app = FastAPI()
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
+http_requests_total = Counter(
+    "http_requests_total", 
+    "Number of HTTP requests received", 
+    ["method", "endpoint"]
+)
+
+http_requests_milliseconds = Histogram(
+    "http_requests_milliseconds",
+    "Duration of HTTP requests in milliseconds",
+    ["method", "endpoint"]
+)
+
+last_sum1n = Gauge("last_sum1n", "Value stores last result of sum1n")
+last_fibo = Gauge("last_fibo", "Value stores last result of fibo")
+list_size = Gauge("list_size", "Value stores current list size")
+last_calculator = Gauge("last_calculator", "Value stores last result of calculator")
+errors_calculator_total = Counter(
+    "errors_calculator_total",
+    "Number of errors in calculator",
+    ["error_type"]
+)
 
 class CustomValidationError(Exception):
 
@@ -11,11 +40,31 @@ class CustomValidationError(Exception):
         self.message = message
         super().__init__(self.message)
 
+@app.middleware("http")
+async def track_requests(request: Request, call_next):
+    method = request.method
+    endpoint = request.url.path
+    http_requests_total.labels(method=method, endpoint=endpoint).inc()
+
+    start_time = time.time()
+    response = await call_next(request)
+    duration = (time.time() - start_time) * 1000  # перевод в миллисекунды
+    http_requests_milliseconds.labels(method=method, endpoint=endpoint).observe(duration)
+
+    return response
+
+# # Exporter
+# @app.get("/metrics")
+# def metrics():
+#     return prometheus_client.generate_latest()
+
 
 # sum1n handler body ------------------------------------------------------
 @app.get("/sum1n/{n}")
 def summorial(n: int = Path(ge=0)):
-    return {"result": sum([i for i in range(1, n+1)])}
+    result = sum([i for i in range(1, n + 1)])
+    last_sum1n.set(result)  # обновление метрики с последним результатом
+    return {"result": result}
 # -------------------------------------------------------------------------
 
 
@@ -29,6 +78,7 @@ def fibonnaci(n: int = Query(ge=1)):
     for i in range(2, n):
         current, prev = prev + current, current
 
+    last_fibo.set(current)
     return {"result": current}
 # -------------------------------------------------------------------------
 
@@ -52,6 +102,7 @@ class RequestList(BaseModel):
 @app.put("/list")
 async def list_handler(req: RequestList):
     global_list.append(req.element)
+    list_size.set(len(global_list))
     return JSONResponse(status_code=200, content=f"{req.element} stored in elements list")
 
 @app.get("/list")
@@ -68,6 +119,7 @@ class RequestCalculator(BaseModel):
 async def calculator(req: RequestCalculator):
     try:
         num1, operator, num2 = validateExpr(req.expr)
+        last_calculator.set(result)
         result = doMath(num1, num2, operator)
     except CustomValidationError as err:
         return JSONResponse(
